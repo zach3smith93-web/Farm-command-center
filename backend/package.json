@@ -14,3 +14,110 @@
     "dotenv": "^16.0.3"
   }
 }
+require("dotenv").config();
+const express = require("express");
+const admin = require("firebase-admin");
+const Stripe = require("stripe");
+const cors = require("cors");
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+// 🔐 Firebase init (you'll finish setup later)
+admin.initializeApp({
+  credential: admin.credential.applicationDefault(),
+});
+
+const db = admin.firestore();
+
+// 💳 Stripe
+const stripe = Stripe(process.env.STRIPE_SECRET);
+
+// 🔐 AUTH middleware
+async function auth(req, res, next) {
+  try {
+    const token = req.headers.authorization?.split("Bearer ")[1];
+    const decoded = await admin.auth().verifyIdToken(token);
+    req.user = decoded;
+    next();
+  } catch {
+    res.status(401).send("Unauthorized");
+  }
+}
+
+// 🐄 CREATE CATTLE
+app.post("/cattle", auth, async (req, res) => {
+  const { tagId, type } = req.body;
+
+  const doc = await db.collection("cattle").add({
+    farmId: req.user.uid,
+    tagId,
+    type,
+    createdAt: new Date(),
+  });
+
+  res.send({ id: doc.id });
+});
+
+// 🐄 GET CATTLE
+app.get("/cattle", auth, async (req, res) => {
+  const snapshot = await db
+    .collection("cattle")
+    .where("farmId", "==", req.user.uid)
+    .get();
+
+  const data = snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+
+  res.send(data);
+});
+
+// ⏱️ CLOCK IN
+app.post("/clock-in", auth, async (req, res) => {
+  const entry = await db.collection("time_entries").add({
+    employeeId: req.user.uid,
+    task: req.body.task,
+    clockIn: new Date(),
+    clockOut: null,
+  });
+
+  res.send({ entryId: entry.id });
+});
+
+// ⏱️ CLOCK OUT
+app.post("/clock-out", auth, async (req, res) => {
+  await db.collection("time_entries")
+    .doc(req.body.entryId)
+    .update({
+      clockOut: new Date(),
+    });
+
+  res.send({ success: true });
+});
+
+// 💳 CREATE SUBSCRIPTION (14 DAY TRIAL)
+app.post("/create-subscription", auth, async (req, res) => {
+  const customer = await stripe.customers.create({
+    email: req.user.email,
+  });
+
+  const subscription = await stripe.subscriptions.create({
+    customer: customer.id,
+    items: [
+      {
+        price: "YOUR_PRICE_ID",
+      },
+    ],
+    trial_period_days: 14,
+  });
+
+  res.send({ subscriptionId: subscription.id });
+});
+
+// 🚀 START SERVER
+app.listen(3000, () => {
+  console.log("Farm Command Center API running");
+});

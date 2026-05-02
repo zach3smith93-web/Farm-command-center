@@ -1,0 +1,7 @@
+farm-command-center/
+│
+├── mobile_app/          # Flutter app
+├── backend/             # Firebase Functions (Node.js)
+├── shared/              # Shared types/interfaces
+├── docs/                # API + system docs
+└── config/              # Environment configs

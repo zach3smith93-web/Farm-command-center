@@ -1,0 +1,25 @@
+backend/functions/src/
+│
+├── modules/
+│   ├── auth/
+│   ├── cattle/
+│   ├── dairy/
+│   ├── beef/
+│   ├── timeclock/
+│   ├── employees/
+│   ├── billing/
+│   ├── alerts/
+│
+├── middleware/
+│   ├── authMiddleware.ts
+│   ├── roleMiddleware.ts
+│
+├── services/
+│   ├── stripeService.ts
+│   ├── notificationService.ts
+│
+├── utils/
+│   ├── validators.ts
+│   ├── errorHandler.ts
+│
+└── index.ts

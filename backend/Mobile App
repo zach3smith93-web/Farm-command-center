@@ -1,0 +1,31 @@
+mobile_app/lib/
+│
+├── core/
+│   ├── theme/
+│   ├── utils/
+│   ├── constants/
+│
+├── features/
+│   ├── auth/
+│   ├── herd/
+│   ├── dairy/
+│   ├── beef/
+│   ├── feed/
+│   ├── health/
+│   ├── breeding/
+│   ├── timeclock/
+│   ├── employees/
+│   ├── dashboard/
+│
+├── services/
+│   ├── api_service.dart
+│   ├── auth_service.dart
+│   ├── stripe_service.dart
+│
+├── models/
+│   ├── user.dart
+│   ├── cattle.dart
+│   ├── time_entry.dart
+│   ├── milk_log.dart
+│
+└── main.dart

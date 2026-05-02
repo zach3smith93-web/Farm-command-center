@@ -1,0 +1,6 @@
+userId
+- name
+- email
+- role (owner, manager, employee)
+- farmId
+- subscriptionStatus

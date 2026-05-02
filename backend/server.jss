@@ -11,7 +11,7 @@ app.use(express.json());
 const APP_NAME = "Farm Command Center";
 
 /* ================================
-   pk_live_51TQruB2Kn50p5kDTqzaYXNb1vg7GRSyD694IZ3GszBMGNIrp7HOcPNNhOQECEvZfTPreoe5lXuOYPovtzhBlYvhB00in8Z1JBy================================ */
+  ================================ */
 const stripe = require('stripe')';
 
 /* ================================
